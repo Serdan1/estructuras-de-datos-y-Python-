@@ -3,6 +3,10 @@ from juegos.hanoi import lanzar_hanoi
 from juegos.caballo import lanzar_caballo, resolver_caballo
 from juegos.reinas import lanzar_reinas, resolver_reinas
 from nodo.caballo import Caballo
+from db.setup import setup_database
+
+# Configurar la base de datos
+setup_database()
 
 def hanoi_gradio(n_discos):
     try:

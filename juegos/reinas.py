@@ -1,5 +1,7 @@
 from nodo.reina import Reina
-from db.modelos import ReinaMovimiento, Session
+from db.reina_movimiento import ReinaMovimiento
+from db import Session
+from datetime import datetime
 import time
 
 def es_seguro(tablero, fila, col, n):
@@ -45,9 +47,15 @@ def lanzar_reinas():
         fin = time.time()
         tiempo = fin - inicio
         
+        id_ejecucion = int(datetime.now().timestamp() * 1000)
+        
         session = Session()
         solucion_str = "-".join(str(x) for x in tablero)
-        registro = ReinaMovimiento(n=n, solucion=solucion_str)
+        registro = ReinaMovimiento(
+            id_ejecucion=id_ejecucion,
+            n=n,
+            solucion=solucion_str
+        )
         session.add(registro)
         session.commit()
         session.close()

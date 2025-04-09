@@ -1,5 +1,7 @@
 from nodo.disco import Disco
-from db.modelos import DiscoMovimiento, Session
+from db.disco_movimiento import DiscoMovimiento
+from db import Session
+from datetime import datetime
 
 def resolver_hanoi(n, origen, auxiliar, destino, torres, movimientos, paso):
     if n == 1:
@@ -29,11 +31,18 @@ def lanzar_hanoi(n=None, print_output=True):
     movimientos = []
     paso = [1]
     
+    id_ejecucion = int(datetime.now().timestamp() * 1000)
+    
     resolver_hanoi(n, 'A', 'B', 'C', torres, movimientos, paso)
     
     session = Session()
     for mov, num_paso in movimientos:
-        registro = DiscoMovimiento(n_discos=n, movimiento=mov, paso=num_paso)
+        registro = DiscoMovimiento(
+            id_ejecucion=id_ejecucion,
+            n_discos=n,
+            movimiento=mov,
+            paso=num_paso
+        )
         session.add(registro)
     session.commit()
     session.close()

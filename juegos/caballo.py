@@ -1,5 +1,7 @@
 from nodo.caballo import Caballo
-from db.modelos import CaballoMovimiento, Session
+from db.caballo_movimiento import CaballoMovimiento
+from db import Session
+from datetime import datetime
 import time
 
 def grado_salida(caballo, pos, visitado):
@@ -44,9 +46,12 @@ def lanzar_caballo():
     tiempo = fin - inicio
     
     if exito:
+        id_ejecucion = int(datetime.now().timestamp() * 1000)
+        
         session = Session()
         secuencia_str = "-".join(f"{pos[0]},{pos[1]}" for pos in secuencia)
         registro = CaballoMovimiento(
+            id_ejecucion=id_ejecucion,
             posicion_inicial=f"{x},{y}",
             secuencia=secuencia_str,
             pasos=len(secuencia) - 1
