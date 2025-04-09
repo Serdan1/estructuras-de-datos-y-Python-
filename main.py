@@ -1,5 +1,6 @@
 from juegos.hanoi import lanzar_hanoi
 from juegos.caballo import lanzar_caballo
+from juegos.reinas import lanzar_reinas
 
 def menu():
     while True:
@@ -12,6 +13,8 @@ def menu():
         
         if opcion == '1':
             lanzar_caballo()
+        elif opcion == '2':
+            lanzar_reinas()
         elif opcion == '3':
             lanzar_hanoi()
         elif opcion == '0':

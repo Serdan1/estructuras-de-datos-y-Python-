@@ -33,7 +33,7 @@ class Disco(Nodo):
 
 class Caballo(Nodo):
     def __init__(self, posicion):
-        super().__init__(posicion)  # Posición como tupla (x, y)
+        super().__init__(posicion)
 
     def mover(self, destino):
         if self.validar_movimiento(destino):
@@ -60,3 +60,18 @@ class Caballo(Nodo):
             if self.validar_movimiento((nueva_x, nueva_y)):
                 actuales.append((nueva_x, nueva_y))
         return actuales
+
+class Reina(Nodo):
+    def __init__(self, posicion):
+        super().__init__(posicion)  # Posición como tupla (fila, columna)
+
+    def mover(self, destino):
+        if self.validar_movimiento(destino):
+            self.posicion = destino
+            return f"Reina a {destino}"
+        return None
+
+    def validar_movimiento(self, destino):
+        # Solo chequeamos límites aquí; la lógica de ataque va en el algoritmo
+        fila, col = destino
+        return 0 <= fila < 8 and 0 <= col < 8  # Ajustaremos según N dinámico

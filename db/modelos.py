@@ -14,10 +14,16 @@ class DiscoMovimiento(Base):
 
 class CaballoMovimiento(Base):
     __tablename__ = 'caballo'
+    id = Column(Integer, primary_key=True)  # Corregido de 'Colloqueumn' a 'Column'
+    posicion_inicial = Column(String)
+    secuencia = Column(String)
+    pasos = Column(Integer)
+
+class ReinaMovimiento(Base):
+    __tablename__ = 'reina'
     id = Column(Integer, primary_key=True)
-    posicion_inicial = Column(String)  # Ej. "0,0"
-    secuencia = Column(String)         # Ej. "0,0-2,1-4,2-..."
-    pasos = Column(Integer)            # Número de saltos
+    n = Column(Integer)
+    solucion = Column(String)
 
 Base.metadata.create_all(engine)
 Session = sessionmaker(bind=engine)
