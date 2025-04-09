@@ -1,4 +1,4 @@
-from nodo.nodo import Disco
+from nodo.disco import Disco
 from db.modelos import DiscoMovimiento, Session
 
 def resolver_hanoi(n, origen, auxiliar, destino, torres, movimientos, paso):
@@ -31,7 +31,6 @@ def lanzar_hanoi(n=None):
     
     resolver_hanoi(n, 'A', 'B', 'C', torres, movimientos, paso)
     
-    # Guardar en la base de datos
     session = Session()
     for mov, num_paso in movimientos:
         registro = DiscoMovimiento(n_discos=n, movimiento=mov, paso=num_paso)
@@ -39,7 +38,6 @@ def lanzar_hanoi(n=None):
     session.commit()
     session.close()
     
-    # Devolver resultados para Gradio o terminal
     resultado = f"Movimientos ({len(movimientos)} totales):\n"
     resultado += "\n".join(f"{num_paso}. {mov}" for mov, num_paso in movimientos)
     
@@ -47,11 +45,8 @@ def lanzar_hanoi(n=None):
     for torre, discos in torres.items():
         visual += f"{torre}: {[d.tamano for d in discos]}\n"
     
-    if n is None:  # Si se llamó desde terminal, imprimir
+    if n is None:
         print(resultado)
         print(visual)
     
     return resultado, visual
-
-if __name__ == "__main__":
-    lanzar_hanoi()

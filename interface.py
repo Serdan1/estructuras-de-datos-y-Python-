@@ -1,9 +1,9 @@
 import gradio as gr
 from juegos.hanoi import lanzar_hanoi
-from juegos.caballo import lanzar_caballo, resolver_caballo, Caballo
+from juegos.caballo import lanzar_caballo, resolver_caballo
 from juegos.reinas import lanzar_reinas, resolver_reinas
+from nodo.caballo import Caballo
 
-# Funciones para Gradio
 def hanoi_gradio(n_discos):
     try:
         n = int(n_discos)
@@ -30,7 +30,6 @@ def caballo_gradio(x, y):
             resultado += " -> ".join(f"{pos[0]},{pos[1]}" for pos in secuencia)
             resultado += f"\nMovimientos: {len(secuencia) - 1}"
             
-            # Visualización del tablero 8x8
             tablero = [["." for _ in range(8)] for _ in range(8)]
             for i, (px, py) in enumerate(secuencia):
                 tablero[7-py][px] = str(i+1)
@@ -51,7 +50,6 @@ def reinas_gradio(n):
             resultado = f"Solución para {n}-Reinas:\n"
             resultado += str(tablero)
             
-            # Visualización del tablero NxN
             visual = ""
             for fila in range(n):
                 linea = ["Q" if tablero[col] == fila else "." for col in range(n)]
@@ -61,7 +59,6 @@ def reinas_gradio(n):
     except ValueError:
         return "Por favor, ingrese un número válido.", ""
 
-# Interfaz de Gradio
 with gr.Blocks(title="Juegos de Algoritmos") as demo:
     gr.Markdown("# Juegos de Algoritmos y Estructuras de Datos")
     

@@ -1,10 +1,9 @@
-from nodo.nodo import Caballo
+from nodo.caballo import Caballo
 from db.modelos import CaballoMovimiento, Session
 import time
 
 def grado_salida(caballo, pos, visitado):
-    # Contar movimientos válidos desde una posición sin visitar
-    caballo.posicion = pos  # Temporalmente mover para calcular
+    caballo.posicion = pos
     return len([p for p in caballo.posibles_movimientos() if p not in visitado])
 
 def resolver_caballo(caballo, tablero_visitado, secuencia):
@@ -12,7 +11,6 @@ def resolver_caballo(caballo, tablero_visitado, secuencia):
         return True
     
     destinos = caballo.posibles_movimientos()
-    # Ordenar por menor grado de salida (heurística de Warnsdorff)
     destinos.sort(key=lambda pos: grado_salida(caballo, pos, tablero_visitado) if pos not in tablero_visitado else float('inf'))
     
     for destino in destinos:
@@ -28,7 +26,6 @@ def resolver_caballo(caballo, tablero_visitado, secuencia):
     return False
 
 def lanzar_caballo():
-    # Pedir posición inicial con recomendación
     print("Recomendamos empezar en la posición X=3, Y=3 para un cálculo rápido.")
     x = int(input("Posición inicial X (0-7): "))
     y = int(input("Posición inicial Y (0-7): "))
@@ -41,7 +38,6 @@ def lanzar_caballo():
     tablero_visitado = {(x, y)}
     secuencia = [(x, y)]
     
-    # Medir tiempo
     inicio = time.time()
     exito = resolver_caballo(caballo, tablero_visitado, secuencia)
     fin = time.time()
@@ -66,6 +62,3 @@ def lanzar_caballo():
     else:
         print("No se encontró un recorrido completo desde esa posición.")
         print(f"Tiempo: {tiempo:.2f} segundos")
-
-if __name__ == "__main__":
-    lanzar_caballo()

@@ -1,4 +1,4 @@
-from nodo import Nodo
+from .nodo import Nodo
 
 class Disco(Nodo):
     def __init__(self, tamano, posicion):
