@@ -1,4 +1,5 @@
 from juegos.hanoi import lanzar_hanoi
+from juegos.caballo import lanzar_caballo
 
 def menu():
     while True:
@@ -9,7 +10,9 @@ def menu():
         print("0. Salir")
         opcion = input("Elige una opción: ")
         
-        if opcion == '3':
+        if opcion == '1':
+            lanzar_caballo()
+        elif opcion == '3':
             lanzar_hanoi()
         elif opcion == '0':
             print("¡Hasta luego!")

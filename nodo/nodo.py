@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 
 class Nodo(ABC):
     def __init__(self, posicion):
-        self.posicion = posicion  # Torre donde está (A, B, C)
+        self.posicion = posicion  # Puede ser torre (A, B, C) o coordenadas (x, y)
 
     @abstractmethod
     def mover(self, destino):
@@ -15,20 +15,51 @@ class Nodo(ABC):
 class Disco(Nodo):
     def __init__(self, tamano, posicion):
         super().__init__(posicion)
-        self.tamano = tamano  # Tamaño del disco (1 es el menor, N el mayor)
+        self.tamano = tamano
 
     def mover(self, destino, torres):
         if self.validar_movimiento(destino, torres):
-            torres[self.posicion].remove(self)  # Quitar de la torre actual
-            self.posicion = destino             # Actualizar posición
-            torres[destino].append(self)        # Añadir a la torre destino
+            torres[self.posicion].remove(self)
+            self.posicion = destino
+            torres[destino].append(self)
             return f"{self.tamano}: {self.posicion} -> {destino}"
         return None
 
     def validar_movimiento(self, destino, torres):
-        # Si la torre destino está vacía, es válido
         if not torres[destino]:
             return True
-        # El disco en la cima de destino debe ser mayor que este
         cima_destino = torres[destino][-1]
         return self.tamano < cima_destino.tamano
+
+class Caballo(Nodo):
+    def __init__(self, posicion):
+        super().__init__(posicion)  # Posición como tupla (x, y)
+
+    def mover(self, destino):
+        if self.validar_movimiento(destino):
+            self.posicion = destino
+            return f"{self.posicion[0]},{self.posicion[1]} -> {destino[0]},{destino[1]}"
+        return None
+
+    def validar_movimiento(self, destino):
+        # Tablero 8x8: x e y deben estar entre 0 y 7
+        if not (0 <= destino[0] <= 7 and 0 <= destino[1] <= 7):
+            return False
+        # Movimientos en L: diferencias de (2,1) o (1,2)
+        dx = abs(destino[0] - self.posicion[0])
+        dy = abs(destino[1] - self.posicion[1])
+        return (dx == 2 and dy == 1) or (dx == 1 and dy == 2)
+
+    def posibles_movimientos(self):
+        # Lista de los 8 posibles movimientos en L
+        movimientos = [
+            (2, 1), (2, -1), (-2, 1), (-2, -1),
+            (1, 2), (1, -2), (-1, 2), (-1, -2)
+        ]
+        actuales = []
+        for dx, dy in movimientos:
+            nueva_x = self.posicion[0] + dx
+            nueva_y = self.posicion[1] + dy
+            if self.validar_movimiento((nueva_x, nueva_y)):
+                actuales.append((nueva_x, nueva_y))
+        return actuales
