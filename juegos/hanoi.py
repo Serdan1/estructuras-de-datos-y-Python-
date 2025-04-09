@@ -39,8 +39,12 @@ def lanzar_hanoi(n=None, print_output=True):
     id_ejecucion = max(mov.id_ejecucion for mov in movimientos_db)
     movimientos = [(mov.movimiento, mov.paso) for mov in movimientos_db if mov.id_ejecucion == id_ejecucion]
     
-    # Simular el estado final de las torres
-    torres = {'A': [i for i in range(n, 0, -1)], 'B': [], 'C': []}
+    # Simular el estado final de las torres usando objetos Disco
+    torres = {
+        'A': [Disco(i, 'A') for i in range(n, 0, -1)],
+        'B': [],
+        'C': []
+    }
     for mov, _ in movimientos:
         # Parsear el movimiento (ej. "1: A -> C")
         tamano = int(mov.split(":")[0])

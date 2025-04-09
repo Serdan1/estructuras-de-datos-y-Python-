@@ -32,9 +32,9 @@ def resolver_reinas(tablero, col, n):
     return False
 
 def lanzar_reinas():
-    n = int(input("Ingrese el tamaño del tablero (N, 1-15): "))
-    if n < 1 or n > 15:
-        print("Por favor, ingrese un valor de N entre 1 y 15.")
+    n = int(input("Ingrese el tamaño del tablero (N, 1-8): "))
+    if n < 1 or n > 8:
+        print("Por favor, ingrese un valor de N entre 1 y 8.")
         return
     
     session = Session()

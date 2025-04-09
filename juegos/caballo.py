@@ -28,7 +28,7 @@ def resolver_caballo(caballo, tablero_visitado, secuencia):
     return False
 
 def lanzar_caballo():
-    print("Recomendamos empezar en la posición X=3, Y=3 para un cálculo rápido.")
+    print("Solo están precalculados los recorridos para las posiciones (3,3) y (4,4).")
     x = int(input("Posición inicial X (0-7): "))
     y = int(input("Posición inicial Y (0-7): "))
     
@@ -37,8 +37,11 @@ def lanzar_caballo():
         return
     
     posicion_inicial = f"{x},{y}"
+    if posicion_inicial not in ["3,3", "4,4"]:
+        print(f"Lo siento, solo hay recorridos precalculados para las posiciones (3,3) y (4,4).")
+        return
+    
     session = Session()
-    # Buscar un recorrido precalculado para esta posición
     recorrido = session.query(CaballoMovimiento).filter_by(posicion_inicial=posicion_inicial).first()
     session.close()
     

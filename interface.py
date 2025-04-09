@@ -5,7 +5,9 @@ from juegos.reinas import lanzar_reinas, resolver_reinas
 from nodo.caballo import Caballo
 from db.setup import setup_database
 from db.precompute import precompute_all
-from db import Session, CaballoMovimiento, ReinaMovimiento
+from db import Session
+from db.caballo_movimiento import CaballoMovimiento
+from db.reina_movimiento import ReinaMovimiento
 
 # Configurar la base de datos y precomputar datos
 setup_database()
@@ -30,6 +32,9 @@ def caballo_gradio(x, y):
             return "Posición inválida.", ""
         
         posicion_inicial = f"{x},{y}"
+        if posicion_inicial not in ["3,3", "4,4"]:
+            return "Lo siento, solo hay recorridos precalculados para las posiciones (3,3) y (4,4).", ""
+        
         session = Session()
         recorrido = session.query(CaballoMovimiento).filter_by(posicion_inicial=posicion_inicial).first()
         session.close()
@@ -56,8 +61,8 @@ def caballo_gradio(x, y):
 def reinas_gradio(n):
     try:
         n = int(n)
-        if n < 1 or n > 15:
-            return "Por favor, ingrese un valor de N entre 1 y 15.", ""
+        if n < 1 or n > 8:
+            return "Por favor, ingrese un valor de N entre 1 y 8.", ""
         
         session = Session()
         soluciones = session.query(ReinaMovimiento).filter_by(n=n).all()
@@ -93,6 +98,7 @@ with gr.Blocks(title="Juegos de Algoritmos") as demo:
         btn_hanoi.click(hanoi_gradio, inputs=n_discos, outputs=[output_hanoi, visual_hanoi])
     
     with gr.Tab("Caballo"):
+        gr.Markdown("Solo están precalculados los recorridos para (3,3) y (4,4).")
         x = gr.Textbox(label="X (0-7)", value="3")
         y = gr.Textbox(label="Y (0-7)", value="3")
         btn_caballo = gr.Button("Resolver")
@@ -101,7 +107,7 @@ with gr.Blocks(title="Juegos de Algoritmos") as demo:
         btn_caballo.click(caballo_gradio, inputs=[x, y], outputs=[output_caballo, visual_caballo])
     
     with gr.Tab("N-Reinas"):
-        n_reinas = gr.Textbox(label="Tamaño del tablero (N, 1-15)", value="4")
+        n_reinas = gr.Textbox(label="Tamaño del tablero (N, 1-8)", value="4")
         btn_reinas = gr.Button("Resolver")
         output_reinas = gr.Textbox(label="Solución")
         visual_reinas = gr.Textbox(label="Tablero")

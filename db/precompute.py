@@ -52,32 +52,32 @@ def precompute_hanoi():
 def precompute_caballo():
     session = Session()
     
-    # Precalcular para cada posición inicial (0,0) a (7,7)
-    for x in range(8):
-        for y in range(8):
-            posicion_inicial = f"{x},{y}"
-            # Verificar si ya existe un recorrido para esta posición
-            if session.query(CaballoMovimiento).filter_by(posicion_inicial=posicion_inicial).count() > 0:
-                print(f"Recorrido para Caballo desde ({x},{y}) ya precalculado.")
-                continue
-            
-            print(f"Precalculando Caballo para posición inicial ({x},{y})...")
-            caballo = Caballo((x, y))
-            tablero_visitado = {(x, y)}
-            secuencia = [(x, y)]
-            id_ejecucion = int(datetime.now().timestamp() * 1000)
-            
-            exito = resolver_caballo(caballo, tablero_visitado, secuencia)
-            
-            if exito:
-                secuencia_str = "-".join(f"{pos[0]},{pos[1]}" for pos in secuencia)
-                registro = CaballoMovimiento(
-                    id_ejecucion=id_ejecucion,
-                    posicion_inicial=posicion_inicial,
-                    secuencia=secuencia_str,
-                    pasos=len(secuencia) - 1
-                )
-                session.add(registro)
+    # Precalcular solo para las posiciones (3,3) y (4,4)
+    posiciones = [(3, 3), (4, 4)]
+    for x, y in posiciones:
+        posicion_inicial = f"{x},{y}"
+        # Verificar si ya existe un recorrido para esta posición
+        if session.query(CaballoMovimiento).filter_by(posicion_inicial=posicion_inicial).count() > 0:
+            print(f"Recorrido para Caballo desde ({x},{y}) ya precalculado.")
+            continue
+        
+        print(f"Precalculando Caballo para posición inicial ({x},{y})...")
+        caballo = Caballo((x, y))
+        tablero_visitado = {(x, y)}
+        secuencia = [(x, y)]
+        id_ejecucion = int(datetime.now().timestamp() * 1000)
+        
+        exito = resolver_caballo(caballo, tablero_visitado, secuencia)
+        
+        if exito:
+            secuencia_str = "-".join(f"{pos[0]},{pos[1]}" for pos in secuencia)
+            registro = CaballoMovimiento(
+                id_ejecucion=id_ejecucion,
+                posicion_inicial=posicion_inicial,
+                secuencia=secuencia_str,
+                pasos=len(secuencia) - 1
+            )
+            session.add(registro)
     
     session.commit()
     session.close()
@@ -85,8 +85,8 @@ def precompute_caballo():
 def precompute_reinas():
     session = Session()
     
-    # Precalcular para N de 1 a 15
-    for n in range(1, 16):
+    # Precalcular para N de 1 a 8 (reducido desde 1 a 15)
+    for n in range(1, 9):
         # Verificar si ya existen soluciones para este N
         if session.query(ReinaMovimiento).filter_by(n=n).count() > 0:
             print(f"Soluciones para N-Reinas con N={n} ya precalculadas.")
@@ -108,6 +108,7 @@ def precompute_reinas():
         
         backtrack(0)
         
+        print(f"Encontradas {len(soluciones)} soluciones para N={n}.")
         id_ejecucion = int(datetime.now().timestamp() * 1000)
         for solucion in soluciones:
             solucion_str = "-".join(str(x) for x in solucion)
