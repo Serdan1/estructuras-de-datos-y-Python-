@@ -16,7 +16,7 @@ def resolver_hanoi(n, origen, auxiliar, destino, torres, movimientos, paso):
     paso[0] += 1
     resolver_hanoi(n-1, auxiliar, origen, destino, torres, movimientos, paso)
 
-def lanzar_hanoi(n=None):
+def lanzar_hanoi(n=None, print_output=True):
     if n is None:
         n = int(input("Número de discos: "))
     
@@ -45,7 +45,7 @@ def lanzar_hanoi(n=None):
     for torre, discos in torres.items():
         visual += f"{torre}: {[d.tamano for d in discos]}\n"
     
-    if n is None:
+    if print_output:
         print(resultado)
         print(visual)
     

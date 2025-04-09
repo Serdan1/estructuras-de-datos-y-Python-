@@ -7,10 +7,11 @@ class Disco(Nodo):
 
     def mover(self, destino, torres):
         if self.validar_movimiento(destino, torres):
+            origen = self.posicion  # Guardar la posición original
             torres[self.posicion].remove(self)
             self.posicion = destino
             torres[destino].append(self)
-            return f"{self.tamano}: {self.posicion} -> {destino}"
+            return f"{self.tamano}: {origen} -> {destino}"  # Usar origen en lugar de self.posicion
         return None
 
     def validar_movimiento(self, destino, torres):

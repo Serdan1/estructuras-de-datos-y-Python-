@@ -9,7 +9,7 @@ def hanoi_gradio(n_discos):
         n = int(n_discos)
         if n < 1:
             return "Número de discos debe ser mayor que 0.", ""
-        resultado, visual = lanzar_hanoi(n)
+        resultado, visual = lanzar_hanoi(n, print_output=False)
         return resultado, visual
     except ValueError:
         return "Por favor, ingrese un número válido.", ""
