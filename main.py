@@ -1,6 +1,12 @@
 from juegos.hanoi import lanzar_hanoi
 from juegos.caballo import lanzar_caballo
 from juegos.reinas import lanzar_reinas
+from db.setup import setup_database
+from db.precompute import precompute_all
+
+# Configurar la base de datos y precomputar datos
+setup_database()
+precompute_all()
 
 def menu():
     while True:

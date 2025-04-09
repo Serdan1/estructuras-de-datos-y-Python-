@@ -32,40 +32,27 @@ def resolver_reinas(tablero, col, n):
     return False
 
 def lanzar_reinas():
-    n = int(input("Ingrese el tamaño del tablero (N, mínimo 4 recomendado): "))
-    if n < 1:
-        print("N debe ser mayor que 0.")
-        return
-    if n < 4 and n != 1:
-        print("No hay soluciones para N < 4, excepto N = 1.")
+    n = int(input("Ingrese el tamaño del tablero (N, 1-15): "))
+    if n < 1 or n > 15:
+        print("Por favor, ingrese un valor de N entre 1 y 15.")
         return
     
-    tablero = [-1] * n
-    inicio = time.time()
+    session = Session()
+    # Buscar soluciones precalculadas para este N
+    soluciones = session.query(ReinaMovimiento).filter_by(n=n).all()
+    session.close()
     
-    if resolver_reinas(tablero, 0, n):
-        fin = time.time()
-        tiempo = fin - inicio
-        
-        id_ejecucion = int(datetime.now().timestamp() * 1000)
-        
-        session = Session()
-        solucion_str = "-".join(str(x) for x in tablero)
-        registro = ReinaMovimiento(
-            id_ejecucion=id_ejecucion,
-            n=n,
-            solucion=solucion_str
-        )
-        session.add(registro)
-        session.commit()
-        session.close()
-        
-        print(f"\nSolución encontrada para {n}-Reinas:")
-        print("Vector (columna -> fila):", tablero)
-        print(f"Tiempo: {tiempo:.2f} segundos")
-        
-        for fila in range(n):
-            linea = ["Q" if tablero[col] == fila else "." for col in range(n)]
-            print(" ".join(linea))
-    else:
-        print("No se encontró solución (esto no debería pasar para N válido).")
+    if not soluciones:
+        print(f"No hay soluciones precalculadas para N={n}.")
+        return
+    
+    # Tomar la primera solución (podríamos mostrar todas si quisiéramos)
+    solucion = soluciones[0]
+    tablero = list(map(int, solucion.solucion.split('-')))
+    
+    print(f"\nSolución encontrada para {n}-Reinas:")
+    print("Vector (columna -> fila):", tablero)
+    
+    for fila in range(n):
+        linea = ["Q" if tablero[col] == fila else "." for col in range(n)]
+        print(" ".join(linea))

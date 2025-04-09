@@ -36,34 +36,18 @@ def lanzar_caballo():
         print("Posición inválida. Debe estar entre 0 y 7.")
         return
     
-    caballo = Caballo((x, y))
-    tablero_visitado = {(x, y)}
-    secuencia = [(x, y)]
+    posicion_inicial = f"{x},{y}"
+    session = Session()
+    # Buscar un recorrido precalculado para esta posición
+    recorrido = session.query(CaballoMovimiento).filter_by(posicion_inicial=posicion_inicial).first()
+    session.close()
     
-    inicio = time.time()
-    exito = resolver_caballo(caballo, tablero_visitado, secuencia)
-    fin = time.time()
-    tiempo = fin - inicio
+    if not recorrido:
+        print(f"No hay recorrido precalculado para la posición ({x},{y}).")
+        return
     
-    if exito:
-        id_ejecucion = int(datetime.now().timestamp() * 1000)
-        
-        session = Session()
-        secuencia_str = "-".join(f"{pos[0]},{pos[1]}" for pos in secuencia)
-        registro = CaballoMovimiento(
-            id_ejecucion=id_ejecucion,
-            posicion_inicial=f"{x},{y}",
-            secuencia=secuencia_str,
-            pasos=len(secuencia) - 1
-        )
-        session.add(registro)
-        session.commit()
-        session.close()
-        
-        print(f"\nRecorrido encontrado desde ({x},{y}):")
-        print("Secuencia:", " -> ".join(f"{pos[0]},{pos[1]}" for pos in secuencia))
-        print(f"Número de movimientos: {len(secuencia) - 1}")
-        print(f"Tiempo: {tiempo:.2f} segundos")
-    else:
-        print("No se encontró un recorrido completo desde esa posición.")
-        print(f"Tiempo: {tiempo:.2f} segundos")
+    secuencia = [tuple(map(int, pos.split(','))) for pos in recorrido.secuencia.split('-')]
+    
+    print(f"\nRecorrido encontrado desde ({x},{y}):")
+    print("Secuencia:", " -> ".join(f"{pos[0]},{pos[1]}" for pos in secuencia))
+    print(f"Número de movimientos: {recorrido.pasos}")
