@@ -1,60 +1,71 @@
 from nodo.nodo import Caballo
 from db.modelos import CaballoMovimiento, Session
+import time
 
-def explorar_caballo(caballo, pasos_restantes, secuencia, movimientos):
-    if pasos_restantes == 0:
-        # Guardar la secuencia completa
-        movimientos.append(secuencia[:])
-        return
+def grado_salida(caballo, pos, visitado):
+    # Contar movimientos válidos desde una posición sin visitar
+    caballo.posicion = pos  # Temporalmente mover para calcular
+    return len([p for p in caballo.posibles_movimientos() if p not in visitado])
+
+def resolver_caballo(caballo, tablero_visitado, secuencia):
+    if len(secuencia) == 64:
+        return True
     
-    # Obtener posibles movimientos desde la posición actual
     destinos = caballo.posibles_movimientos()
+    # Ordenar por menor grado de salida (heurística de Warnsdorff)
+    destinos.sort(key=lambda pos: grado_salida(caballo, pos, tablero_visitado) if pos not in tablero_visitado else float('inf'))
+    
     for destino in destinos:
-        # Mover el caballo y añadir la nueva posición a la secuencia
-        caballo.mover(destino)
-        secuencia.append(destino)
-        explorar_caballo(caballo, pasos_restantes - 1, secuencia, movimientos)
-        # Retroceder (backtracking)
-        secuencia.pop()
-        caballo.posicion = secuencia[-1] if secuencia else caballo.posicion
+        if destino not in tablero_visitado:
+            tablero_visitado.add(destino)
+            secuencia.append(destino)
+            caballo.mover(destino)
+            if resolver_caballo(caballo, tablero_visitado, secuencia):
+                return True
+            tablero_visitado.remove(destino)
+            secuencia.pop()
+            caballo.posicion = secuencia[-1] if secuencia else secuencia[0]
+    return False
 
 def lanzar_caballo():
-    # Pedir posición inicial y número de pasos
+    # Pedir posición inicial con recomendación
+    print("Recomendamos empezar en la posición X=3, Y=3 para un cálculo rápido.")
     x = int(input("Posición inicial X (0-7): "))
     y = int(input("Posición inicial Y (0-7): "))
-    pasos = int(input("Número de pasos: "))
     
-    # Validar entrada
     if not (0 <= x <= 7 and 0 <= y <= 7):
         print("Posición inválida. Debe estar entre 0 y 7.")
         return
     
-    # Inicializar el caballo
     caballo = Caballo((x, y))
-    movimientos = []
-    secuencia = [(x, y)]  # Iniciar con la posición inicial
+    tablero_visitado = {(x, y)}
+    secuencia = [(x, y)]
     
-    # Explorar todos los caminos
-    explorar_caballo(caballo, pasos, secuencia, movimientos)
+    # Medir tiempo
+    inicio = time.time()
+    exito = resolver_caballo(caballo, tablero_visitado, secuencia)
+    fin = time.time()
+    tiempo = fin - inicio
     
-    # Guardar en la base de datos
-    session = Session()
-    for mov in movimientos:
-        secuencia_str = "-".join(f"{pos[0]},{pos[1]}" for pos in mov)
+    if exito:
+        session = Session()
+        secuencia_str = "-".join(f"{pos[0]},{pos[1]}" for pos in secuencia)
         registro = CaballoMovimiento(
             posicion_inicial=f"{x},{y}",
             secuencia=secuencia_str,
-            pasos=pasos
+            pasos=len(secuencia) - 1
         )
         session.add(registro)
-    session.commit()
-    session.close()
-    
-    # Mostrar resultados
-    print(f"\nSecuencias válidas para {pasos} pasos desde ({x},{y}):")
-    for i, mov in enumerate(movimientos, 1):
-        secuencia_str = " -> ".join(f"{pos[0]},{pos[1]}" for pos in mov)
-        print(f"{i}. {secuencia_str}")
+        session.commit()
+        session.close()
+        
+        print(f"\nRecorrido encontrado desde ({x},{y}):")
+        print("Secuencia:", " -> ".join(f"{pos[0]},{pos[1]}" for pos in secuencia))
+        print(f"Número de movimientos: {len(secuencia) - 1}")
+        print(f"Tiempo: {tiempo:.2f} segundos")
+    else:
+        print("No se encontró un recorrido completo desde esa posición.")
+        print(f"Tiempo: {tiempo:.2f} segundos")
 
 if __name__ == "__main__":
     lanzar_caballo()

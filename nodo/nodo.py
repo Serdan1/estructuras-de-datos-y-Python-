@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 
 class Nodo(ABC):
     def __init__(self, posicion):
-        self.posicion = posicion  # Puede ser torre (A, B, C) o coordenadas (x, y)
+        self.posicion = posicion
 
     @abstractmethod
     def mover(self, destino):
@@ -42,16 +42,13 @@ class Caballo(Nodo):
         return None
 
     def validar_movimiento(self, destino):
-        # Tablero 8x8: x e y deben estar entre 0 y 7
         if not (0 <= destino[0] <= 7 and 0 <= destino[1] <= 7):
             return False
-        # Movimientos en L: diferencias de (2,1) o (1,2)
         dx = abs(destino[0] - self.posicion[0])
         dy = abs(destino[1] - self.posicion[1])
         return (dx == 2 and dy == 1) or (dx == 1 and dy == 2)
 
     def posibles_movimientos(self):
-        # Lista de los 8 posibles movimientos en L
         movimientos = [
             (2, 1), (2, -1), (-2, 1), (-2, -1),
             (1, 2), (1, -2), (-1, 2), (-1, -2)
