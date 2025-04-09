@@ -2,8 +2,8 @@ from sqlalchemy import create_engine, Column, Integer, String
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 
-# Crear la base de datos en la raíz del proyecto
-engine = create_engine('sqlite:///estructuras-de-datos-y-Python-/movimientos.db', echo=True)
+# Ruta absoluta para Codespaces
+engine = create_engine('sqlite:////workspaces/estructuras-de-datos-y-Python-/movimientos.db', echo=True)
 Base = declarative_base()
 
 class DiscoMovimiento(Base):
