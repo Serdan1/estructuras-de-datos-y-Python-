@@ -17,6 +17,8 @@ def hanoi_gradio(n_discos):
         return resultado, visual
     except ValueError:
         return "Por favor, ingrese un número válido.", ""
+    except Exception as e:
+        return f"Error al resolver las Torres de Hanói: {str(e)}", ""
 
 def caballo_gradio(x, y):
     try:
@@ -42,6 +44,8 @@ def caballo_gradio(x, y):
         return "No se encontró recorrido.", ""
     except ValueError:
         return "Por favor, ingrese números válidos.", ""
+    except Exception as e:
+        return f"Error al resolver el Juego del Caballo: {str(e)}", ""
 
 def reinas_gradio(n):
     try:
@@ -62,6 +66,8 @@ def reinas_gradio(n):
         return "No se encontró solución.", ""
     except ValueError:
         return "Por favor, ingrese un número válido.", ""
+    except Exception as e:
+        return f"Error al resolver N-Reinas: {str(e)}", ""
 
 with gr.Blocks(title="Juegos de Algoritmos") as demo:
     gr.Markdown("# Juegos de Algoritmos y Estructuras de Datos")
